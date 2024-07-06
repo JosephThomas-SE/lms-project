@@ -26,9 +26,11 @@ const Login = ({ onLogin }) => {
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     if (username === 'user' && password === users.user) {
-      onLogin('user');
+      const role = 'user'; //defining role to pass the role to the parent component
+      onLogin(role, username); // Pass the username to the parent component
     } else if (username === 'admin' && password === users.admin) {
-      onLogin('admin');
+      const role = 'admin'; //defining role to pass the role to the parent component
+      onLogin(role, username); // Pass the username to the parent component
     } else {
       setError('Invalid credentials');
     }

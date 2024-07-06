@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+
+import { collection, addDoc } from "firebase/firestore"; 
 import { db } from "../firebaseConfig";
 
 const AddBook = () => {
@@ -16,18 +18,29 @@ const AddBook = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const newBook = {
+      bid,
+      libraryNumber,
+      bookName,
+      bookAuthor,
+      price,
+    };
+
+    bookDetails.push(newBook);
+
+    // TODO: Add doc to DB
     try {
-      await db.collection("Sunday School LMS").add(bookDetails);
-      setBookDetails({
-        bid: "",
-        libraryNumber: "",
-        bookName: "",
-        bookAuthor: "",
-        price: "",
+      await addDoc(collection(db, "sunday_school_lms"), {
+        ...newBook
       });
     } catch (error) {
-      console.error("Error adding book", error);
+      alert(error);
     }
+
+    setEmployees(employees);
+    setIsAdding(false);
+    getEmployees()
   };
 
   return (

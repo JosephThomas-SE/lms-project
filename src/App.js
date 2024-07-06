@@ -39,6 +39,7 @@ const App = () => {
   const handleLogout = () => {
     setIsAuthenticated(false);
     setUserRole('');
+    setUsername('');
   };
 
   if (!isAuthenticated) {
@@ -48,37 +49,22 @@ const App = () => {
   return (
     <Router>
       <div className={`app ${isDayMode ? 'day-mode' : 'night-mode'}`}>
-        <Navbar 
-          onToggleTheme={handleToggleTheme} 
-          isDayMode={isDayMode} 
-          username={username} 
-          onLogout={handleLogout} 
-        />
-        <div className="content">
-        <Sidebar 
-          onGenreChange={handleGenreChange} 
-        />
-          <Routes>
-            <Route 
-              path="/books" 
-              element={<BookList books={filteredBooks} />} 
-            />
-            <Route 
-              path="/books/:id" 
-              element={<BookDetail />} 
-            />
-            {/* If only admin they are taken to this page, where the crud op. can be done */}
-            {userRole === 'admin' && 
-              <Route 
-                path="/admin" 
-                element={<AdminPage />} 
-              />
-            }
-            <Route 
-              path="*" 
-              element={<Navigate to="/books" />} 
-            />
-          </Routes>
+      <Sidebar onGenreChange={handleGenreChange} />
+        <div className="main-content">
+          <Navbar 
+            onToggleTheme={handleToggleTheme} 
+            isDayMode={isDayMode} 
+            username={username} 
+            onLogout={handleLogout} 
+          />
+          <div className="content">
+            <Routes>
+              <Route path="/books" element={<BookList userRole={userRole} books={filteredBooks} />} />
+              <Route path="/books/:id" element={<BookDetail />} />
+              {userRole === 'admin' && <Route path="/admin" element={<AdminPage />} />}
+              <Route path="*" element={<Navigate to="/books" />} />
+            </Routes>
+          </div>
         </div>
       </div>
     </Router>

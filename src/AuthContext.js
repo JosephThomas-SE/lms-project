@@ -12,13 +12,11 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log('Auth state changed:', user);
       setCurrentUser(user);
       if (user) {
         try {
           const roleDoc = await getDoc(doc(db, 'roles', user.uid));
           if (roleDoc.exists()) {
-            console.log('Role data:', roleDoc.data());
             setRole(roleDoc.data().role);
           } else {
             setRole('user'); // Default role if none is set
