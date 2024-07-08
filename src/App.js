@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Login/Login';
+import Register from './components/Register/Register';
 import BookList from './components/BookList/BookList';
 import BookDetail from './components/BookDetail/BookDetail';
 import AdminPage from './components/Admin/AdminPage';
@@ -36,6 +37,12 @@ const App = () => {
     setUsername(enteredUsername);
   };
 
+  const handleRegister = (role, enteredUsername) => {
+    setIsAuthenticated(true);
+    setUserRole(role);
+    setUsername(enteredUsername);
+  };
+
   const handleLogout = () => {
     setIsAuthenticated(false);
     setUserRole('');
@@ -43,7 +50,15 @@ const App = () => {
   };
 
   if (!isAuthenticated) {
-    return <Login onLogin={handleLogin} />;
+    return (
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/register" element={<Register onRegister={handleRegister} />} />
+          <Route path="*" element={<Navigate to="/login" />} />
+        </Routes>
+      </Router>
+    );
   }
 
   return (
@@ -54,7 +69,7 @@ const App = () => {
           <Navbar 
             onToggleTheme={handleToggleTheme} 
             isDayMode={isDayMode} 
-            username={username} 
+            role={userRole} 
             onLogout={handleLogout} 
           />
           <div className="content">

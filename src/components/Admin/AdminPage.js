@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import booksData from '../../data/books.json';
 
+
+
+import BookList from '../BookList/BookList';
+
 const AdminPage = () => {
   const [books, setBooks] = useState(booksData);
 
@@ -19,6 +23,8 @@ const AdminPage = () => {
   return (
     <div className="admin-container">
       <h2>Admin Page</h2>
+      <button onClick={handleAdd}>Add Book</button>
+      <BookList />
       <ul>
         {books.map((book) => (
           <li key={book.Bid}>
@@ -28,7 +34,7 @@ const AdminPage = () => {
           </li>
         ))}
       </ul>
-      <button onClick={handleAdd}>Add Book</button>
+      
     </div>
   );
 };

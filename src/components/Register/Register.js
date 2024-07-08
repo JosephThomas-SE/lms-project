@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import './Login.css';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { createUserWithEmailAndPassword, updateProfile  } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../../config/firebaseConfig'; // Ensure you have your Firebase configuration in a separate file
-import { Link } from 'react-router-dom';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router-dom';
 
-
-const Login = ({ onLogin }) => {
-  const [credentials, setCredentials] = useState({ username: '', password: '' });
+const Register = ({ onRegister }) => {
+  const [credentials, setCredentials] = useState({ email: '', username: '', password: '', role: 'user', Phone_number: '', });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -28,27 +25,30 @@ const Login = ({ onLogin }) => {
     setIsLoading(true);
     setError('');
 
-    const { username, password } = credentials;
+    const { email, username, password, role, Phone_number } = credentials;
 
     try {
-      // Attempt to sign in with Firebase Authentication
-      const userCredential = await signInWithEmailAndPassword(auth, username, password);
+      // Register new user with Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Check the user's role in Firestore
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
-      if (userDoc.exists()) {
-       alert(userDoc.data);
-        console.log(userDoc.data);
+      // Update the user's profile with the username
+      await updateProfile(user, {
+        displayName: username
+      });
 
-        const role = userDoc.data().Role;
-        onLogin(role, username); // Pass the role and username to the parent component
-      } else {
-        setError('Credentials not Found.');
-      }
-    } catch (authError) {
-      alert("AuthError coming up");
-      alert(authError);
+      // Add user details to Firestore
+      await setDoc(doc(db, 'users', user.uid), {
+        username,
+        Phone_number,
+        role
+      });
+
+      alert("Registered Successfully...!");
+      onRegister(role, username); // Pass the role and username to the parent component
+    } catch (registrationError) {
+      console.error('Error registering user:', registrationError);
+      setError('Error registering user');
     }
 
     setIsLoading(false);
@@ -57,13 +57,27 @@ const Login = ({ onLogin }) => {
   return (
     <div className="login-container">
       <form onSubmit={handleSubmit}>
-        <h1>Login</h1>
+        <h1>Register</h1>
         {error && <p className="error">{error}</p>}
+        <input
+          type="email"
+          name="email"
+          placeholder="Email"
+          value={credentials.email}
+          onChange={handleChange}
+        />
         <input
           type="text"
           name="username"
           placeholder="Username"
           value={credentials.username}
+          onChange={handleChange}
+        />
+        <input
+          type="tel"
+          name="Phone_number"
+          placeholder="Phone Number"
+          value={credentials.Phone_number}
           onChange={handleChange}
         />
         <div className="password-container">
@@ -75,20 +89,20 @@ const Login = ({ onLogin }) => {
             onChange={handleChange}
           />
           <span onClick={togglePasswordVisibility} className="password-toggle-icon">
-            <FontAwesomeIcon icon={showPassword ? faEye : faEyeSlash} />
+            <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
           </span>
         </div>
         <button type="submit" disabled={isLoading}>
           {isLoading ? (
             <span className="loading-icon"></span>
           ) : (
-            'Login'
+            'Register'
           )}
         </button>
-        <p>Don't have an account? <Link to="/register">Register here</Link></p>
+        <p>Already have an account? <Link to="/login">Login here</Link></p>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Register;

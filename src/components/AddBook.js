@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { collection, addDoc } from "firebase/firestore"; 
-import { db } from "../firebaseConfig";
+import { db } from "../config/firebaseConfig";
 
 const AddBook = () => {
   const [bookDetails, setBookDetails] = useState({

@@ -3,7 +3,7 @@ import { FiLogOut, FiSun, FiMoon } from 'react-icons/fi'; // Import icons as nee
 
 import './Navbar.css';
 
-const Navbar = ({ onToggleTheme, isDayMode, username, onLogout }) => {
+const Navbar = ({ onToggleTheme, isDayMode, role, onLogout }) => {
   
   return (
     <div className="navbar">
@@ -14,10 +14,11 @@ const Navbar = ({ onToggleTheme, isDayMode, username, onLogout }) => {
           </span>
           <span>{isDayMode ? 'Day Mode' : 'Night Mode'}</span>
         </div>
+        <button>Add Book</button>
       </div>
       <div className="profile">
       <div className="right-items">
-        <div className="profile-button">{username}</div> {/* Placeholder for profile image or initials */}
+        <div className="profile-button">{role}</div> {/* Placeholder for profile image or initials */}
           {/* <p>{username}</p> {Replace with actual username} */}
           <div className="logout" onClick={onLogout}>
             <FiLogOut />
