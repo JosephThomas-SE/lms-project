@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Login.css';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../../config/firebaseConfig'; // Ensure you have your Firebase configuration in a separate file
+import { auth, FirestoreDb } from '../../config/firebaseConfig'; // Ensure you have your Firebase configuration in a separate file
 import { Link } from 'react-router-dom';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -36,8 +36,9 @@ const Login = ({ onLogin }) => {
       const user = userCredential.user;
 
       // Check the user's role in Firestore
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const userDoc = await getDoc(doc(FirestoreDb, 'users', user.uid));
       if (userDoc.exists()) {
+
        alert(userDoc.data);
         console.log(userDoc.data);
 

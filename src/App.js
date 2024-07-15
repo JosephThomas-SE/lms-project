@@ -69,7 +69,7 @@ const App = () => {
           <Navbar 
             onToggleTheme={handleToggleTheme} 
             isDayMode={isDayMode} 
-            role={userRole} 
+            role={username} 
             onLogout={handleLogout} 
           />
           <div className="content">

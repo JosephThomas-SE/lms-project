@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { collection, addDoc } from "firebase/firestore"; 
-import { db } from "../config/firebaseConfig";
+import { realtimeDb } from "../config/firebaseConfig";
 
 const AddBook = () => {
   const [bookDetails, setBookDetails] = useState({
@@ -31,7 +31,7 @@ const AddBook = () => {
 
     // TODO: Add doc to DB
     try {
-      await addDoc(collection(db, "sunday_school_lms"), {
+      await addDoc(collection(realtimeDb, "sunday_school_lms"), {
         ...newBook
       });
     } catch (error) {

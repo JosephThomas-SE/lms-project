@@ -1,8 +1,8 @@
 // src/components/EditBook.js
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { db } from "../firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { realtimeDb } from "../../config/firebaseConfig";
 
 const EditBook = () => {
   const { id } = useParams();
@@ -17,7 +17,7 @@ const EditBook = () => {
 
   useEffect(() => {
     const fetchBook = async () => {
-      const bookDoc = await getDoc(doc(db, "Sunday School LMS", id));
+      const bookDoc = await getDoc(doc(realtimeDb, "Sunday School LMS", id));
       if (bookDoc.exists()) {
         setBookDetails(bookDoc.data());
       }
@@ -32,7 +32,7 @@ const EditBook = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await setDoc(doc(db, "Sunday School LMS", id), bookDetails);
+      await setDoc(doc(realtimeDb, "Sunday School LMS", id), bookDetails);
       navigate("/books");
     } catch (error) {
       console.error("Error editing book", error);

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+//import { Link } from 'react-router-dom';
 
-import { collection, getDocs } from "firebase/firestore";
-import { db } from '../../config/firebaseConfig';
+import { ref, onValue } from 'firebase/database';
+// import { collection, getDocs } from "firebase/firestore";
+import { realtimeDb } from '../../config/firebaseConfig';
 
 import './BookList.css';
 import Header from '../Header';
@@ -10,17 +11,31 @@ import Header from '../Header';
 
 const BookList = () => {
 
-  const [books, setBooks] = useState();
+  const [books, setBooks] = useState([]);
+  const [error, setError] = useState('');
 
   const getBooks = async () => {
-    const querySnapshot = await getDocs(collection(db, "sunday_school_lms"));
-    const books = querySnapshot.docs.map(doc =>({id: doc.id, ...doc.data()}))
-    setBooks(books)
-  }
+    const booksRef = ref(realtimeDb);
+    onValue(booksRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const booksArray = Object.keys(data).map(key => ({
+          id: key,
+          ...data[key]
+        }));
+        setBooks(booksArray);
+        setError('');
+      } else {
+        setBooks([]);
+      }
+      }, (error) => {
+        setError('Error Finding Books');
+    });
+  };
 
   useEffect(() => {
     getBooks()
-  });
+  }, []);
 
 
   const handleEdit = (id) => {
@@ -52,10 +67,11 @@ const BookList = () => {
               </tr>
             </thead>
             <tbody>
+            {error && <p className="error">{error}</p>}
               {books ? (
                 books.map((book, i) => (
                   <tr key={book.id}>
-                    <td className='library_number'>{book.LibraryNumber}</td>
+                    <td className='library_number'>{book.libraryNumber}</td>
                     <td className='book_name'>{book.BookName}</td>
                     <td className='book_genre'>{book.Genre}</td>
                     {/* <td>{formatter.format(book.Genre)}</td> */}

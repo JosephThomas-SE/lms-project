@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { auth, db } from './config/firebaseConfig';
+import { auth, FirestoreDb } from './config/firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 
 const AuthContext = createContext();
@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
       setCurrentUser(user);
       if (user) {
         try {
-          const roleDoc = await getDoc(doc(db, 'roles', user.uid));
+          const roleDoc = await getDoc(doc(FirestoreDb, 'roles', user.uid));
           if (roleDoc.exists()) {
             setRole(roleDoc.data().role);
           } else {
